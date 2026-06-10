@@ -59,52 +59,52 @@ REST API для банковского сервиса на языке Go. Пол
 - PostgreSQL 17 (опционально, при локальном запуске)
 - Make (опционально)
 
-### Вариант 1: Запуск через Docker (рекомендуется)
+## Вариант 1: Запуск через Docker (рекомендуется)
 
 
-# Клонируйте репозиторий
+## Клонируйте репозиторий
 git clone https://github.com/YOUR_USERNAME/bank-api-service.git
 cd bank-api-service
 
-# Создайте файл .env из примера
+## Создайте файл .env из примера
 cp .env.example .env
 
-# Запустите приложение
+## Запустите приложение
 docker-compose up --build -d
 
-# Проверьте статус
+## Проверьте статус
 docker-compose ps
 
-# Посмотрите логи
+## Посмотрите логи
 docker-compose logs -f
 
-## Вариант 2: Локальный запуск
-# Установите зависимости
+# Вариант 2: Локальный запуск
+## Установите зависимости
 go mod download
 
-# Создайте базу данных PostgreSQL
+## Создайте базу данных PostgreSQL
 createdb bank
 
-# Примените миграции
+## Примените миграции
 psql -d bank -f migrations/001_create_tables.sql
 
-# Создайте файл .env
+## Создайте файл .env
 cat > .env << EOF
 PORT=8080
 DATABASE_URL=postgres://postgres:password@localhost:5432/bank?sslmode=disable
 JWT_SECRET=your-secret-key
 EOF
 
-# Запустите приложение
+## Запустите приложение
 go run cmd/main.go
 Приложение будет доступно по адресу: http://localhost:8081
-## API Эндпоинты
-# Публичные эндпоинты
+# API Эндпоинты
+## Публичные эндпоинты
 Метод	Эндпоинт	Описание
 GET	/health	Проверка статуса сервера
 POST	/register	Регистрация нового пользователя
 POST	/login	Аутентификация и получение JWT токена
-## Защищенные эндпоинты (требуют Bearer токен)
+# Защищенные эндпоинты (требуют Bearer токен)
 Метод	Эндпоинт	Описание
 POST	/api/accounts	Создание нового счета
 GET	/api/accounts	Получение всех счетов пользователя
@@ -115,8 +115,8 @@ POST	/api/transfer	Перевод между счетами
 GET	/api/transactions?account_id={id}	История транзакций
 POST	/api/credits	Оформление кредита
 GET	/api/credits/{credit_id}/schedule	График платежей
-## Примеры запросов
-# Регистрация пользователя
+# Примеры запросов
+## Регистрация пользователя
 curl -X POST http://localhost:8080/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -135,7 +135,7 @@ curl -X POST http://localhost:8080/register \
   }
 }
 
-# Аутентификация
+## Аутентификация
 curl -X POST http://localhost:8080/login \
   -H "Content-Type: application/json" \
   -d '{
@@ -153,13 +153,13 @@ curl -X POST http://localhost:8080/login \
   }
 }
 
-# Создание счета
+## Создание счета
 curl -X POST http://localhost:8080/api/accounts \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{}'
 
-  # Выпуск карты
+  ## Выпуск карты
   curl -X POST http://localhost:8080/api/accounts/1/cards \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
@@ -175,7 +175,7 @@ curl -X POST http://localhost:8080/api/accounts \
   "cvv": "123"
 }
 
-# Перевод средств
+## Перевод средств
 curl -X POST http://localhost:8080/api/transfer \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
@@ -186,7 +186,7 @@ curl -X POST http://localhost:8080/api/transfer \
     "description": "Monthly payment"
   }'
 
-  # Оформление кредита
+  ## Оформление кредита
   curl -X POST http://localhost:8080/api/credits \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
@@ -208,12 +208,12 @@ curl -X POST http://localhost:8080/api/transfer \
   "created_at": "2026-01-11T10:00:00Z"
 }
 
-# График платежей
+## График платежей
 curl -X GET http://localhost:8080/api/credits/1/schedule \
   -H "Authorization: Bearer YOUR_TOKEN"
 
-  ## Безопасность
-  # Реализованные меры
+  # Безопасность
+  ## Реализованные меры
 
 JWT аутентификация - все защищенные эндпоинты требуют валидный токен
 
@@ -227,49 +227,49 @@ SQL инъекции - все запросы параметризованы
 
 Транзакции - переводы выполняются в атомарных транзакциях
 
-# Переменные окружения для безопасности
+## Переменные окружения для безопасности
 
 JWT_SECRET=your-super-secret-key-min-32-chars
 HMAC_SECRET=your-hmac-secret-for-card-integrity
 PGP_PUBLIC_KEY=your-pgp-public-key
 PGP_PRIVATE_KEY=your-pgp-private-key
 
-## Тестирование
+# Тестирование
 
-# Все тесты
+## Все тесты
 go test ./...
 
-# Тесты с покрытием
+## Тесты с покрытием
 go test -cover ./...
 
-# Конкретный пакет
+## Конкретный пакет
 go test ./internal/service -v
 
-## Пример тестового скрипта
+# Пример тестового скрипта
 
 #!/bin/bash
 
-# Регистрация
+## Регистрация
 curl -X POST http://localhost:8080/register \
   -H "Content-Type: application/json" \
   -d '{"username":"test","email":"test@test.com","password":"test123"}'
 
-# Логин
+## Логин
 TOKEN=$(curl -X POST http://localhost:8080/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@test.com","password":"test123"}' \
   | jq -r '.token')
 
-# Создание счета
+## Создание счета
 curl -X POST http://localhost:8080/api/accounts \
   -H "Authorization: Bearer $TOKEN"
 
-# Получение счетов
+## Получение счетов
 curl -X GET http://localhost:8080/api/accounts \
   -H "Authorization: Bearer $TOKEN"
 
-  ## Roadmap
-  # Реализовано
+  # Roadmap
+  ## Реализовано
   Регистрация и аутентификация
 
 Управление банковскими счетами
