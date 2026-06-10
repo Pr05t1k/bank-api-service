@@ -1,5 +1,4 @@
-# .gitignore
-.env
+# Binaries
 *.exe
 *.exe~
 *.dll
@@ -7,11 +6,34 @@
 *.dylib
 *.test
 *.out
-bank-api.exe
-/vendor/
-.DS_Store
-*.log
-*.tmp
-*.swp
-.idea/
+bank-api
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+vendor/
+
+# Go workspaces
+go.work
+go.work.sum
+
+# Docker
+*.pid
